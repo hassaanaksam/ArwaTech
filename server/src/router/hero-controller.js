@@ -1,9 +1,9 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
-const Employee = require("../model/employee.js");
+const Hero = require("../model/hero.js");
 
-const router = express.Router();
+const routerHero = express.Router();
 
 // Set up Multer
 const storage = multer.diskStorage({
@@ -18,35 +18,34 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Serve static files
-router.use(express.static('uploads'));
+routerHero.use(express.static('uploads'));
 
-router.post("/employee", upload.single('image'), async (req, res) => {
+routerHero.post("/hero", upload.single('image'), async (req, res) => {
   try {
-    const employeesData = req.body;
+    const herosData = req.body;
     // const image = req.file.filename;
 
-    // const employee = new Employee({ ...employeesData, image });
-    const employee = new Employee(employeesData);
+    // const hero = new Hero({ ...herosData, image });
+    const hero = new Hero(herosData);
+    const heroData = await hero.save();
 
-    const employeeData = await employee.save();
-
-    res.status(200).send({ message: "Employee successfully saved", data: employeeData });
+    res.status(200).send({ message: "Hero successfully saved", data: heroData });
   } catch (error) {
     res.status(400).send(error);
   }
 });
 
-router.get('/employee', async (req, res) => {
+routerHero.get('/hero', async (req, res) => {
   try {
-    const employees = await Employee.find();
+    const heros = await Hero.find();
 
     res.json({
       status: true,
-      employees: employees
+      heros: heros
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-module.exports = router;
+module.exports = routerHero;
